@@ -21,7 +21,9 @@ source virtual-env-name/bin/activate
 ```s
 pip install -r requirements.txt
 ```
-5. Set necessary permissions
+5. Go to colors.txt in /templates to configure the color specification for a particular user. 
+
+ 6. Set necessary permissions
 ```sh
 sudo visudo
 # type i to edit the file
@@ -31,7 +33,7 @@ linuxuserwhoissysadmin ALL=(ALL) NOPASSWD:/file_path/Infinity/sysadmin/helper.sh
 # type esc to exit the editor
 # type :wq to save and exit
 ```
-6. Run the App
+7. Run the App
 ```sh
 python3 -m flask run 
 # Flask would start in http://127.0.0.1:5000/
