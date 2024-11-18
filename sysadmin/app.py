@@ -15,36 +15,6 @@ def get_permissions(path):
     return stat.filemode(st.st_mode)
 
 
-
-def get_user_access(path):
-    st = os.stat(path)
-    owner_uid = st.st_uid
-    group_gid = st.st_gid
-
-    try:
-        owner_name = pwd.getpwuid(owner_uid).pw_name
-    except KeyError:
-        owner_name = None
-
-    try:
-        group_name = grp.getgrgid(group_gid).gr_name
-    except KeyError:
-        group_name = None
-
-    permissions = st.st_mode
-    access_users = []
-
-    # Define the allowed users
-    allowed_users = {'root', 'ronnie','yellow_user'}
-
-    # Check if the owner has read, write, and execute permissions
-    if owner_name in allowed_users:
-        if permissions & (stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR):
-            access_users.append(owner_name)
-
-    return access_users
-
-
 def get_file_structure(path, include_files=False):
     structure = []
     if os.path.isdir(path):
@@ -56,7 +26,6 @@ def get_file_structure(path, include_files=False):
                     "path": full_path,
                     "type": "directory",
                     "permissions": get_permissions(full_path),
-                    "user_access": get_user_access(full_path),
                     "owner": pwd.getpwuid(os.stat(full_path).st_uid).pw_name,
                     "group": grp.getgrgid(os.stat(full_path).st_gid).gr_name,
                     "children": get_file_structure(full_path, include_files)
@@ -67,7 +36,6 @@ def get_file_structure(path, include_files=False):
                     "path": full_path,
                     "type": "file",
                     "permissions": get_permissions(full_path),
-                    "user_access": get_user_access(full_path),
                     "owner": pwd.getpwuid(os.stat(full_path).st_uid).pw_name,
                     "group": grp.getgrgid(os.stat(full_path).st_gid).gr_name
                 })
