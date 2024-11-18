@@ -15,6 +15,7 @@ def get_permissions(path):
     return stat.filemode(st.st_mode)
 
 
+
 def get_file_structure(path, include_files=False):
     structure = []
     if os.path.isdir(path):
@@ -44,6 +45,10 @@ def get_file_structure(path, include_files=False):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/templates/colors.txt')
+def serve_colors():
+    return send_from_directory('templates', 'colors.txt')
 
 
 @app.route('/files', methods=['GET'])

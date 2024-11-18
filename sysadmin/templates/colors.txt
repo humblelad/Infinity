@@ -1,0 +1,4 @@
+ronnie:green
+root:red
+yellow_user:#f5db01
+others:#ccc
