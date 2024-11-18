@@ -142,11 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const link = svg.selectAll('path.link')
                         .data(links, d => d.id);
 
-                    const linkEnter = link.enter().insert('g', 'g')
-                        .attr('class', 'link-group')
-                        .selectAll('path')
-                        .data(d => d.data.user_access.map(user => ({ user, source: d.parent, target: d })))
-                        .enter().append('path')
+                    const linkEnter = link.enter().insert('path', 'g')
                         .attr('class', 'link')
                         .attr('d', d => {
                             const o = { x: source.x0, y: source.y0 };
@@ -159,14 +155,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 'yellow_user':'#f5db01',
                                 'others': '#ccc'
                             };
-                            return colors[d.user];
+                            return colors[d.data.owner] || colors['others'];
                         });
 
                     const linkUpdate = linkEnter.merge(link);
 
                     linkUpdate.transition()
                         .duration(200)
-                        .attr('d', d => diagonal(d.target, d.source));
+                        .attr('d', d => diagonal(d, d.parent));
 
                     const linkExit = link.exit().transition()
                         .duration(200)
