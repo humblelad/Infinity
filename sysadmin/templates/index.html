@@ -57,38 +57,46 @@
     </style>
 </head>
 <body>
-<div class="container mt-2">
-    <form id="folderForm" class="form-inline">
-        <div class="form-group mb-2">
-            <label for="folderInput" class="sr-only">Enter absolute path:</label>
-            <input type="text" class="form-control" id="folderInput" placeholder="Enter absolute path">
-        </div>
-        <div class="form-group mx-sm-3 mb-2">
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="includeFiles" name="include_files">
-                <label class="form-check-label" for="includeFiles">Include Files</label>
+<div class="container mt-4">
+    <form id="folderForm" class="card shadow-lg p-4 bg-gradient">
+        <h4 class="text-primary mb-4">Infinity - Directory Explorer</h4>
+        <div class="form-group mb-3">
+            <label for="folderInput" class="form-label text-white fw-bold">Enter absolute path:</label>
+            <div class="input-group">
+                <span class="input-group-text bg-primary text-white">
+                    <i class="fas fa-folder"></i>
+                </span>
+                <input type="text" class="form-control form-control-lg bg-dark text-white border-0" 
+                       id="folderInput" placeholder="e.g., /home/user/documents">
             </div>
         </div>
-        <button type="submit" class="btn btn-primary mb-1">Submit</button>
+        <div class="form-group mb-4">
+            <div class="form-check form-switch ps-5">
+                <input type="checkbox" class="form-check-input" id="includeFiles" name="include_files">
+                <label class="form-check-label ms-3 fs-4" for="includeFiles">Include Files</label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill hover-shadow">
+            <i class="fas fa-search me-2"></i>Explore
+        </button>
     </form>
 </div>
 
 <div class="container mt-2">
-    <form id="permissionForm" class="card p-2">
+    <form id="permissionForm" class="card p-4">
         <div class="d-flex justify-content-between align-items-center">
             <h3 id="permissionHeading" class="card-title">Change file permission</h3>
             <button type="button" class="close" aria-label="Close" onclick="$('#permissionForm').hide();">
-                <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true">X</span>
             </button>
         </div>
         <div id="permissionMeaning" class="card-text mb-3"></div>
         <div class="form-group">
-            <label for="permissionInput">Update via Numeric Permissions:</label> <a href="https://github.com/humblelad/Infinity/blob/main/Linux_SysAdmin_FilePerm_CheatSheet.md" target="_blank">Cheatsheet</a>
+            <label for="permissionInput" style="color:white">Update via Numeric Permissions:</label> <a href="https://github.com/humblelad/Infinity/blob/main/Linux_SysAdmin_FilePerm_CheatSheet.md" target="_blank">Cheatsheet</a>
             <input type="text" class="form-control" id="permissionInput" placeholder="Enter new permissions">
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
-    </form>
-</div>
+    </form></div>
 
 <div class="svg-container">
 

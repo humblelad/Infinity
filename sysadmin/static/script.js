@@ -237,17 +237,89 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         document.addEventListener('keydown', function (event) {
-            if (event.code === 'Space' && selectedNode && selectedNode !== selectedNode.parent && selectedNode !== root) {
-                document.getElementById('permissionForm').style.display = 'block';
-                document.getElementById('permissionHeading').innerText = `You are changing file permission for "${selectedNode.data.name}"`;
-                const permissionMeaning = parsePermissions(selectedNode.data.permissions);
-                document.getElementById('permissionMeaning').innerHTML = permissionMeaning;
-            }
-        });
+            if (event.code === 'Space' && selectedNode && selectedNode !== selectedNode.parent && selectedNode !== root && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                event.preventDefault();
+                const form = document.getElementById('permissionForm');
+                
+                form.style.display = 'block';
+                form.style.position = 'fixed';
+                form.style.top = '50%';
+                form.style.left = '50%';
+                form.style.transform = 'translate(-50%, -50%)';
+                form.style.backgroundColor = '#0a0a0f';
+                form.style.padding = '25px';
+                form.style.borderRadius = '12px';
+                form.style.boxShadow = '0 0 20px rgba(0, 255, 255, 0.3), 0 0 40px rgba(128, 0, 255, 0.2)';
+                form.style.zIndex = '1000';
+                form.style.border = '1px solid rgba(0, 255, 255, 0.2)';
+                form.style.backdropFilter = 'blur(10px)';
+                form.style.cursor = 'move';
 
-        document.getElementById('permissionForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            const newPermissions = document.getElementById('permissionInput').value;
+                let isDragging = false;
+                let currentX;
+                let currentY;
+                let initialX;
+                let initialY;
+                let xOffset = 0;
+                let yOffset = 0;
+
+                form.addEventListener('mousedown', dragStart);
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', dragEnd);
+
+                function dragStart(e) {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                    if (e.target === form) {
+                        isDragging = true;
+                    }
+                }
+
+                function drag(e) {
+                    if (isDragging) {
+                        e.preventDefault();
+                        currentX = e.clientX - initialX;
+                        currentY = e.clientY - initialY;
+
+                        // Limit the dragging area
+                        const maxX = window.innerWidth - form.offsetWidth;
+                        const maxY = window.innerHeight - form.offsetHeight;
+                        
+                        currentX = Math.min(Math.max(0, currentX), maxX);
+                        currentY = Math.min(Math.max(0, currentY), maxY);
+
+                        xOffset = currentX;
+                        yOffset = currentY;
+
+                        form.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                    }
+                }
+
+                function dragEnd() {
+                    isDragging = false;
+                }
+                
+                const heading = document.getElementById('permissionHeading');
+                heading.innerText = `You are changing file permission for "${selectedNode.data.name}"`;
+                heading.style.color = '#00ffff';
+                heading.style.marginBottom = '20px';
+                heading.style.fontSize = '20px';
+                heading.style.textShadow = '0 0 10px rgba(0, 255, 255, 0.5)';
+                heading.style.fontFamily = "'Orbitron', sans-serif";
+                
+                const permissionMeaning = parsePermissions(selectedNode.data.permissions);
+                const meaningElement = document.getElementById('permissionMeaning');
+                meaningElement.innerHTML = permissionMeaning;
+                meaningElement.style.backgroundColor = '#1a1a2e';
+                meaningElement.style.padding = '15px';
+                meaningElement.style.borderRadius = '8px';
+                meaningElement.style.marginBottom = '20px';
+                meaningElement.style.lineHeight = '1.6';
+                meaningElement.style.color = '#00ff9d';
+                meaningElement.style.border = '1px solid rgba(0, 255, 157, 0.3)';
+                meaningElement.style.textShadow = '0 0 5px rgba(0, 255, 157, 0.3)';
+            }
+        });        document.getElementById('permissionForm').addEventListener('submit', function (event) {            event.preventDefault();            const newPermissions = document.getElementById('permissionInput').value;
             if (selectedNode) {
                 fetch(`/update_permissions`, {
                     method: 'POST',
