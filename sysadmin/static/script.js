@@ -4,6 +4,29 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedNode = null;
     let root = null;
 
+    $("#permissionForm").draggable();
+    $("#securityPanel").draggable({
+        handle: ".card-header",
+        containment: "window",
+        scroll: false
+    });
+
+    $('.minimize-icon').click(function() {
+        const panel = $('#securityPanel');
+        const cardBody = panel.find('.card-body');
+        const icon = $(this);
+        
+        if (cardBody.is(':visible')) {
+            cardBody.slideUp();
+            icon.removeClass('fa-minus').addClass('fa-plus');
+            panel.css('height', 'auto');
+        } else {
+            cardBody.slideDown();
+            icon.removeClass('fa-plus').addClass('fa-minus');
+        }
+    });
+
+
 
                 fetch('/templates/colors.txt')
     .then(response => response.text())
@@ -36,6 +59,40 @@ document.addEventListener('DOMContentLoaded', function() {
             if (folderPath) {
                 const folderName = folderPath.split('/').filter(Boolean).pop();
                 d3.json(`/files?path=${encodeURIComponent(folderPath)}&include_files=${includeFiles}`).then(data => {
+                    const securityPanel = document.getElementById('securityPanel');
+                    const securityIssues = document.getElementById('securityIssues');
+                    securityPanel.style.display = 'block';
+                    
+                    if (data.security_analysis && data.security_analysis.length > 0) {
+                        const issuesBySection = {};
+                        data.security_analysis.forEach(issue => {
+                            if (!issuesBySection[issue.section]) {
+                                issuesBySection[issue.section] = [];
+                            }
+                            issuesBySection[issue.section].push(issue);
+                        });
+                    
+                        const issuesHTML = Object.entries(issuesBySection).map(([section, issues]) => `
+                            <div class="section-group mb-3">
+                                <h6 class="text-cyan">[${section}]</h6>
+                                ${issues.map(issue => `
+                                    <div class="alert ${getSeverityClass(issue.risk_level)} mb-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge ${getSeverityBadgeClass(issue.risk_level)}" ${issue.risk_level === 'Critical' ? 'style="color: #fff;"' : ''}>${issue.risk_level}</span>
+                                        </div>
+                                        <small class="d-block mt-1">${issue.file}</small>
+                                        <span class="d-block">Permission: ${issue.permission}</span>
+                                        <span class="text-info d-block">${issue.recommendation}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `).join('');
+                        
+                        securityIssues.innerHTML = issuesHTML;
+                    } else {
+                        securityIssues.innerHTML = '<div class="alert alert-success">No security issues found!</div>';
+                    }
+
                     d3.select("svg").remove();
 
                     const svg = svgContainer.append("svg")
@@ -44,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .append("g")
                         .attr("transform", "translate(0,100)");
 
-                    root = d3.hierarchy({name: folderName, children: data}, d => d.children);
+                    root = d3.hierarchy({name: folderName, children: data.structure}, d => d.children);
                     root.x0 = height / 2;
                     root.y0 = 0;
 
@@ -344,3 +401,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     });
+
+    function getSeverityClass(severity) {
+        const classes = {
+            'CRITICAL': 'alert-danger border-danger',
+            'HIGH': 'alert-warning border-warning',
+            'MEDIUM': 'alert-info border-info',
+            'LOW': 'alert-secondary border-secondary'
+        };
+        return classes[severity.toUpperCase()] || 'alert-secondary';
+    }
+    
+    function getSeverityBadgeClass(severity) {
+        const classes = {
+            'CRITICAL': 'bg-danger',
+            'HIGH': 'bg-warning text-dark',
+            'MEDIUM': 'bg-info',
+            'LOW': 'bg-secondary'
+        };
+        return classes[severity.toUpperCase()] || 'bg-secondary';
+    }
