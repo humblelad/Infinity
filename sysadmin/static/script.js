@@ -4,12 +4,31 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedNode = null;
     let root = null;
 
-    $("#permissionForm").draggable();
     $("#securityPanel").draggable({
         handle: ".card-header",
         containment: "window",
         scroll: false
     });
+
+    $("#permissionForm").draggable({
+        scroll: false,
+        containment: false,
+        start: function(event, ui) {
+            const offset = $(this).offset();
+            $(this).css({
+                transform: 'none',
+                top: offset.top + 'px',
+                left: offset.left + 'px'
+            });
+            $(this).data('dx', event.clientX - offset.left);
+            $(this).data('dy', event.clientY - offset.top);
+        },
+        drag: function(event, ui) {
+            ui.position.left = event.clientX - $(this).data('dx');
+            ui.position.top = event.clientY - $(this).data('dy');
+        }
+    });
+    
 
     $('.minimize-icon').click(function() {
         const panel = $('#securityPanel');
@@ -303,6 +322,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.style.top = '50%';
                 form.style.left = '50%';
                 form.style.transform = 'translate(-50%, -50%)';
+                
+                form.style.position = 'fixed';
+                form.style.top = '50%';
+                form.style.left = '50%';
+                form.style.transform = 'translate(-50%, -50%)';
                 form.style.backgroundColor = '#0a0a0f';
                 form.style.padding = '25px';
                 form.style.borderRadius = '12px';
@@ -312,49 +336,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.style.backdropFilter = 'blur(10px)';
                 form.style.cursor = 'move';
 
-                let isDragging = false;
-                let currentX;
-                let currentY;
-                let initialX;
-                let initialY;
-                let xOffset = 0;
-                let yOffset = 0;
-
-                form.addEventListener('mousedown', dragStart);
-                document.addEventListener('mousemove', drag);
-                document.addEventListener('mouseup', dragEnd);
-
-                function dragStart(e) {
-                    initialX = e.clientX - xOffset;
-                    initialY = e.clientY - yOffset;
-                    if (e.target === form) {
-                        isDragging = true;
-                    }
-                }
-
-                function drag(e) {
-                    if (isDragging) {
-                        e.preventDefault();
-                        currentX = e.clientX - initialX;
-                        currentY = e.clientY - initialY;
-
-                        // Limit the dragging area
-                        const maxX = window.innerWidth - form.offsetWidth;
-                        const maxY = window.innerHeight - form.offsetHeight;
-                        
-                        currentX = Math.min(Math.max(0, currentX), maxX);
-                        currentY = Math.min(Math.max(0, currentY), maxY);
-
-                        xOffset = currentX;
-                        yOffset = currentY;
-
-                        form.style.transform = `translate(${currentX}px, ${currentY}px)`;
-                    }
-                }
-
-                function dragEnd() {
-                    isDragging = false;
-                }
+                form.style.zIndex = '1000';
+                form.style.border = '1px solid rgba(0, 255, 255, 0.2)';
+                form.style.backdropFilter = 'blur(10px)';
                 
                 const heading = document.getElementById('permissionHeading');
                 heading.innerText = `You are changing file permission for "${selectedNode.data.name}"`;

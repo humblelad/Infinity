@@ -54,6 +54,10 @@
             padding: 10px;
             border: 1px solid #ccc;
             z-index: 10;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         .section-group {
             border-left: 3px solid #00ffff;
@@ -113,7 +117,7 @@
         <div class="d-flex justify-content-between align-items-center">
             <h3 id="permissionHeading" class="card-title">Change file permission</h3>
             <button type="button" class="close" aria-label="Close" onclick="$('#permissionForm').hide();">
-                <span aria-hidden="true" style="color: white;">X</span>
+                <span aria-hidden="true" style="color: white;">x</span>
             </button>
         </div>
         <div id="permissionMeaning" class="card-text mb-3"></div>
@@ -128,11 +132,7 @@
 
 </div>
 
-<script>
-    $(document).ready(function() {
-        $("#permissionForm").draggable();
-    });
-</script>
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <div id="securityPanel" class="card position-fixed" style="right: 20px; top: 100px; width: 300px; display: none; background: #0a0a0f; color: #00ff9d; border: 1px solid rgba(0, 255, 255, 0.2); box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); cursor: move;">
