@@ -100,8 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                             <span class="badge ${getSeverityBadgeClass(issue.risk_level)}" ${issue.risk_level === 'Critical' ? 'style="color: #fff;"' : ''}>${issue.risk_level}</span>
                                         </div>
                                         <small class="d-block mt-1">${issue.file}</small>
-                                        <span class="d-block">Permission: ${issue.permission}</span>
-                                        <span class="text-info d-block">${issue.recommendation}</span>
+                                        <span class="d-block" style="font-weight: bold;">Permission: ${issue.permission}</span>
+                                        <span class="text-success d-block" style="font-weight: bold;">${issue.recommendation}</span>
                                     </div>
                                 `).join('')}
                             </div>
