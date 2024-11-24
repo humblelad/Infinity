@@ -54,10 +54,6 @@
             padding: 10px;
             border: 1px solid #ccc;
             z-index: 10;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
         }
         .section-group {
             border-left: 3px solid #00ffff;
@@ -81,43 +77,40 @@
         .minimize-icon:hover {
             color: #00ffff;
         }
-        #folderInput {
-            border: 2px solid #0099ff !important;
-        }
     </style>
 </head>
 <body>
-    
-<div class="container-fluid p-2">
-    <form id="folderForm" class="card shadow-lg p-2 bg-gradient w-100">
-        <div class="d-flex align-items-center justify-content-between" style="margin-left: 20px;">
-            <h5 class="text-primary mb-0 me-3">Infinity - Directory Explorer</h5> &nbsp;&nbsp;&nbsp;
-            <div class="d-flex align-items-center flex-grow-1">
-                <div class="input-group me-3" style="max-width: 1300px;">
-                    <span class="input-group-text bg-primary text-white">
-                        <i class="fas fa-folder"></i>
-                    </span> &nbsp;
-                    <input type="text" class="form-control text-black border-0" 
-                            id="folderInput" placeholder="Enter absolute path: (eg: /home/user/folder)">
-                </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <div class="form-check form-switch me-3">
-                    <input type="checkbox" class="form-check-input" id="includeFiles" name="include_files">
-                    <label class="form-check-label" for="includeFiles">Include Files</label>
-                </div>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button type="submit" class="btn btn-primary btn-sm py-1">
-                    <i class="fas fa-search me-1"></i>Explore
-                </button>
+<div class="container-fluid p-4">
+    <form id="folderForm" class="card shadow-lg p-3 bg-gradient col-md-4">
+        <h5 class="text-primary mb-3">Infinity - Directory Explorer</h5>
+        <div class="form-group mb-2">
+            <label for="folderInput" class="form-label text-white">Enter absolute path:</label>
+            <div class="input-group">
+                <span class="input-group-text bg-primary text-white">
+                    <i class="fas fa-folder"></i>
+                </span>
+                <input type="text" class="form-control bg-dark text-white border-0" 
+                       id="folderInput" placeholder="e.g., /home/user/documents">
             </div>
         </div>
+        <div class="form-group mb-2">
+            <div class="form-check form-switch">
+                <input type="checkbox" class="form-check-input" id="includeFiles" name="include_files">
+                <label class="form-check-label" for="includeFiles">Include Files</label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary rounded-pill hover-shadow">
+            <i class="fas fa-search me-2"></i>Explore
+        </button>
     </form>
-</div>    
+</div>
 
 <div class="container mt-2">
     <form id="permissionForm" class="card p-4">
         <div class="d-flex justify-content-between align-items-center">
             <h3 id="permissionHeading" class="card-title">Change file permission</h3>
             <button type="button" class="close" aria-label="Close" onclick="$('#permissionForm').hide();">
-                <span aria-hidden="true" style="color: white;">x</span>
+                <span aria-hidden="true">X</span>
             </button>
         </div>
         <div id="permissionMeaning" class="card-text mb-3"></div>
@@ -132,10 +125,14 @@
 
 </div>
 
-
+<script>
+    $(document).ready(function() {
+        $("#permissionForm").draggable();
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<div id="securityPanel" class="card position-fixed" style="right: 20px; top: 100px; width: 400px; display: none; background: #0a0a0f; color: #00ff9d; border: 1px solid rgba(0, 255, 255, 0.2); box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); cursor: move;">
+<div id="securityPanel" class="card position-fixed" style="right: 20px; top: 100px; width: 300px; display: none; background: #0a0a0f; color: #00ff9d; border: 1px solid rgba(0, 255, 255, 0.2); box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); cursor: move;">
     <div class="card-header bg-dark text-cyan d-flex justify-content-between align-items-center">
         <h5 class="m-0">Hawk Analysis</h5>
         <i class="fas fa-minus minimize-icon" style="cursor: pointer;"></i>

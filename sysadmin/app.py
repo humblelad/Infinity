@@ -18,41 +18,42 @@ def check_sensitive_files(path):
     security_sections = {
         "Configuration Files": {
             "patterns": [
-                ("web.config", "High", "644", "Microsoft IIS Web configuration: Ensure only web server user can read."),
-                ("config.ini", "High", "644", "Application configuration file: Restrict to application user access only."),
-                ("config", "High", "644", "Generic configuration file: Limit access to application owner."),
-                ("config.json", "High", "644", "JSON configuration file: Restrict to application user."),
-                (".docker/config.json", "High", "600", "Docker credentials file: Must be readable only by Docker daemon user."),
-                ("appsettings.json", "High", "644", ".NET Application settings may contain connection strings. Limit to app user."),
-                (".htaccess", "Medium", "644", "Apache configuration file: Should be readable only by web server."),
-                (".env", "Critical", "600", "Environment variables file may contain secrets. Must be readable only by owner."),
-                ("credentials.json", "Critical", "600", "Credentials storage file: Strictly limit to owner access only."),
-                (".git-credentials", "Critical", "600", "Git credentials file: Must be accessible only by Git user."),
-                (".aws/credentials", "Critical", "600", "AWS credentials file: Restrict to AWS CLI user only.")
+                ("web.config", "High", "644"),
+                ("config.ini", "High", "644"),
+                ("config", "High", "644"),
+                ("config.json", "High", "644"),
+                (".docker/config.json", "High", "600"),
+                ("appsettings.json", "High", "644"),
+                (".htaccess", "Medium", "644"),
+                (".env", "Critical", "600"),
+                ("credentials.json", "Critical", "600"),
+                (".git-credentials", "Critical", "600"),
+                (".aws/credentials", "Critical", "600")
             ]
         },
         "Keys and Private Files": {
             "patterns": [
-                (".key", "Critical", "600", "Private key file: Must be readable only by service owner."),
-                (".pem", "Critical", "600", "SSL/SSH private key: Strictly limit to service user access."),
-                ("server.crt", "Critical", "600", "SSL certificate: Restrict access to web server user only."),
-                ("id_rsa", "Critical", "600", "SSH private key: Must be accessible only by key owner."),
-                ("shadow", "Critical", "600", "Linux password file: Restrict to root access only."),
-                ("passwd", "Critical", "644", "User account file: Should be world-readable but write-protected.")
+                (".key", "Critical", "600"),
+                (".pem", "Critical", "600"),
+                ("server.crt", "Critical", "600"),
+                ("id_rsa", "Critical", "600"),
+                ("shadow", "Critical", "600"),
+                ("passwd", "Critical", "644")
             ]
         },
         "Log Files": {
             "patterns": [
-                ("error.log", "Medium", "644", "Avoid log poisoning by restricting access to log files."),
-                ("access.log", "Medium", "644", "Avoid log poisoning by restricting access to log files.")
+                ("error.log", "Low", "644"),
+                ("access.log", "Low", "644"),
+                ("application.log", "Medium", "644")
             ]
         },
         "Backup and Data Files": {
             "patterns": [
-                (".bak", "High", "600", "Backup files may contain sensitive data: Limit to backup service user."),
-                (".backup", "High", "600", "Backup archives may contain sensitive content: Restrict to backup user."),
-                (".sql", "Medium", "600", "Database dumps may contain sensitive data: Limit to database admin access."),
-                (".sqlite", "High", "600", "SQLite database files: Restrict to application user only.")
+                (".bak", "High", "600"),
+                (".backup", "High", "600"),
+                (".sql", "Medium", "600"),
+                (".sqlite", "High", "600")
             ]
         }
     }
@@ -72,7 +73,7 @@ def check_sensitive_files(path):
                 file_perms = oct(os.stat(file_path).st_mode)[-3:]
                 
                 for section, content in security_sections.items():
-                    for pattern, severity, recommended_chmod, recommendation in content["patterns"]:
+                    for pattern, severity, recommended_chmod in content["patterns"]:
                         if pattern.lower() in file.lower():
                             if int(file_perms, 8) > int(recommended_chmod, 8):
                                 security_issues.append({
@@ -80,8 +81,9 @@ def check_sensitive_files(path):
                                     'permission': file_perms,
                                     'risk_level': severity,
                                     'section': section,
-                                    'recommendation': f'{recommendation} (change to: {recommended_chmod})'
+                                    'recommendation': f'Change permissions to {recommended_chmod}'
                                 })
+                
                 
             except Exception as e:
                 continue
