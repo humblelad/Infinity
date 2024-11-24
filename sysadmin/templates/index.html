@@ -5,6 +5,7 @@
     <title>Infinity</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -54,41 +55,71 @@
             border: 1px solid #ccc;
             z-index: 10;
         }
+        .section-group {
+            border-left: 3px solid #00ffff;
+            padding-left: 10px;
+            margin-bottom: 20px;
+        }
+        .badge {
+            font-size: 0.8em;
+            padding: 5px 10px;
+            border-radius: 12px;
+        }
+        .text-cyan {
+            color: #00ffff;
+        }
+        .card-body {
+        transition: all 0.3s ease;
+        }
+        .minimize-icon {
+            transition: transform 0.3s ease;
+        }
+        .minimize-icon:hover {
+            color: #00ffff;
+        }
     </style>
 </head>
 <body>
-<div class="container mt-2">
-    <form id="folderForm" class="form-inline">
+<div class="container-fluid p-4">
+    <form id="folderForm" class="card shadow-lg p-3 bg-gradient col-md-4">
+        <h5 class="text-primary mb-3">Infinity - Directory Explorer</h5>
         <div class="form-group mb-2">
-            <label for="folderInput" class="sr-only">Enter absolute path:</label>
-            <input type="text" class="form-control" id="folderInput" placeholder="Enter absolute path">
+            <label for="folderInput" class="form-label text-white">Enter absolute path:</label>
+            <div class="input-group">
+                <span class="input-group-text bg-primary text-white">
+                    <i class="fas fa-folder"></i>
+                </span>
+                <input type="text" class="form-control bg-dark text-white border-0" 
+                       id="folderInput" placeholder="e.g., /home/user/documents">
+            </div>
         </div>
-        <div class="form-group mx-sm-3 mb-2">
-            <div class="form-check">
+        <div class="form-group mb-2">
+            <div class="form-check form-switch">
                 <input type="checkbox" class="form-check-input" id="includeFiles" name="include_files">
                 <label class="form-check-label" for="includeFiles">Include Files</label>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary mb-1">Submit</button>
+        <button type="submit" class="btn btn-primary rounded-pill hover-shadow">
+            <i class="fas fa-search me-2"></i>Explore
+        </button>
     </form>
 </div>
 
 <div class="container mt-2">
-    <form id="permissionForm" class="card p-2">
+    <form id="permissionForm" class="card p-4">
         <div class="d-flex justify-content-between align-items-center">
             <h3 id="permissionHeading" class="card-title">Change file permission</h3>
             <button type="button" class="close" aria-label="Close" onclick="$('#permissionForm').hide();">
-                <span aria-hidden="true">&times;</span>
+                <span aria-hidden="true">X</span>
             </button>
         </div>
         <div id="permissionMeaning" class="card-text mb-3"></div>
         <div class="form-group">
-            <label for="permissionInput">Update via Numeric Permissions:</label> <a href="https://github.com/humblelad/Infinity/blob/main/Linux_SysAdmin_FilePerm_CheatSheet.md" target="_blank">Cheatsheet</a>
+            <label for="permissionInput" style="color:white">Update via Numeric Permissions:</label> <a href="https://github.com/humblelad/Infinity/blob/main/Linux_SysAdmin_FilePerm_CheatSheet.md" target="_blank">Cheatsheet</a>
             <input type="text" class="form-control" id="permissionInput" placeholder="Enter new permissions">
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
-    </form>
-</div>
+    </form></div>
 
 <div class="svg-container">
 
@@ -101,5 +132,15 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<div id="securityPanel" class="card position-fixed" style="right: 20px; top: 100px; width: 300px; display: none; background: #0a0a0f; color: #00ff9d; border: 1px solid rgba(0, 255, 255, 0.2); box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); cursor: move;">
+    <div class="card-header bg-dark text-cyan d-flex justify-content-between align-items-center">
+        <h5 class="m-0">Hawk Analysis</h5>
+        <i class="fas fa-minus minimize-icon" style="cursor: pointer;"></i>
+    </div>
+    <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+        <div id="securityIssues"></div>
+    </div>
+</div>
+
 </body>
 </html>
