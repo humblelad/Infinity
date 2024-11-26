@@ -4,6 +4,48 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedNode = null;
     let root = null;
 
+    $("#securityPanel").draggable({
+        handle: ".card-header",
+        containment: "window",
+        scroll: false
+    });
+
+    $("#permissionForm").draggable({
+        scroll: false,
+        containment: false,
+        start: function(event, ui) {
+            const offset = $(this).offset();
+            $(this).css({
+                transform: 'none',
+                top: offset.top + 'px',
+                left: offset.left + 'px'
+            });
+            $(this).data('dx', event.clientX - offset.left);
+            $(this).data('dy', event.clientY - offset.top);
+        },
+        drag: function(event, ui) {
+            ui.position.left = event.clientX - $(this).data('dx');
+            ui.position.top = event.clientY - $(this).data('dy');
+        }
+    });
+    
+
+    $('.minimize-icon').click(function() {
+        const panel = $('#securityPanel');
+        const cardBody = panel.find('.card-body');
+        const icon = $(this);
+        
+        if (cardBody.is(':visible')) {
+            cardBody.slideUp();
+            icon.removeClass('fa-minus').addClass('fa-plus');
+            panel.css('height', 'auto');
+        } else {
+            cardBody.slideDown();
+            icon.removeClass('fa-plus').addClass('fa-minus');
+        }
+    });
+
+
 
                 fetch('/templates/colors.txt')
     .then(response => response.text())
@@ -36,6 +78,40 @@ document.addEventListener('DOMContentLoaded', function() {
             if (folderPath) {
                 const folderName = folderPath.split('/').filter(Boolean).pop();
                 d3.json(`/files?path=${encodeURIComponent(folderPath)}&include_files=${includeFiles}`).then(data => {
+                    const securityPanel = document.getElementById('securityPanel');
+                    const securityIssues = document.getElementById('securityIssues');
+                    securityPanel.style.display = 'block';
+                    
+                    if (data.security_analysis && data.security_analysis.length > 0) {
+                        const issuesBySection = {};
+                        data.security_analysis.forEach(issue => {
+                            if (!issuesBySection[issue.section]) {
+                                issuesBySection[issue.section] = [];
+                            }
+                            issuesBySection[issue.section].push(issue);
+                        });
+                    
+                        const issuesHTML = Object.entries(issuesBySection).map(([section, issues]) => `
+                            <div class="section-group mb-3">
+                                <h6 class="text-cyan">[${section}]</h6>
+                                ${issues.map(issue => `
+                                    <div class="alert ${getSeverityClass(issue.risk_level)} mb-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge ${getSeverityBadgeClass(issue.risk_level)}" ${issue.risk_level === 'Critical' ? 'style="color: #fff;"' : ''}>${issue.risk_level}</span>
+                                        </div>
+                                        <small class="d-block mt-1">${issue.file}</small>
+                                        <span class="d-block" style="font-weight: bold;">Permission: ${issue.permission}</span>
+                                        <span class="text-success d-block" style="font-weight: bold;">${issue.recommendation}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `).join('');
+                        
+                        securityIssues.innerHTML = issuesHTML;
+                    } else {
+                        securityIssues.innerHTML = '<div class="alert alert-success">No security issues found!</div>';
+                    }
+
                     d3.select("svg").remove();
 
                     const svg = svgContainer.append("svg")
@@ -44,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         .append("g")
                         .attr("transform", "translate(0,100)");
 
-                    root = d3.hierarchy({name: folderName, children: data}, d => d.children);
+                    root = d3.hierarchy({name: folderName, children: data.structure}, d => d.children);
                     root.x0 = height / 2;
                     root.y0 = 0;
 
@@ -237,17 +313,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         document.addEventListener('keydown', function (event) {
-            if (event.code === 'Space' && selectedNode && selectedNode !== selectedNode.parent && selectedNode !== root) {
-                document.getElementById('permissionForm').style.display = 'block';
-                document.getElementById('permissionHeading').innerText = `You are changing file permission for "${selectedNode.data.name}"`;
-                const permissionMeaning = parsePermissions(selectedNode.data.permissions);
-                document.getElementById('permissionMeaning').innerHTML = permissionMeaning;
-            }
-        });
+            if (event.code === 'Space' && selectedNode && selectedNode !== selectedNode.parent && selectedNode !== root && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                event.preventDefault();
+                const form = document.getElementById('permissionForm');
+                
+                form.style.display = 'block';
+                form.style.position = 'fixed';
+                form.style.top = '50%';
+                form.style.left = '50%';
+                form.style.transform = 'translate(-50%, -50%)';
+                
+                form.style.position = 'fixed';
+                form.style.top = '50%';
+                form.style.left = '50%';
+                form.style.transform = 'translate(-50%, -50%)';
+                form.style.backgroundColor = '#0a0a0f';
+                form.style.padding = '25px';
+                form.style.borderRadius = '12px';
+                form.style.boxShadow = '0 0 20px rgba(0, 255, 255, 0.3), 0 0 40px rgba(128, 0, 255, 0.2)';
+                form.style.zIndex = '1000';
+                form.style.border = '1px solid rgba(0, 255, 255, 0.2)';
+                form.style.backdropFilter = 'blur(10px)';
+                form.style.cursor = 'move';
 
-        document.getElementById('permissionForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            const newPermissions = document.getElementById('permissionInput').value;
+                form.style.zIndex = '1000';
+                form.style.border = '1px solid rgba(0, 255, 255, 0.2)';
+                form.style.backdropFilter = 'blur(10px)';
+                
+                const heading = document.getElementById('permissionHeading');
+                heading.innerText = `You are changing file permission for "${selectedNode.data.name}"`;
+                heading.style.color = '#00ffff';
+                heading.style.marginBottom = '20px';
+                heading.style.fontSize = '20px';
+                heading.style.textShadow = '0 0 10px rgba(0, 255, 255, 0.5)';
+                heading.style.fontFamily = "'Orbitron', sans-serif";
+                
+                const permissionMeaning = parsePermissions(selectedNode.data.permissions);
+                const meaningElement = document.getElementById('permissionMeaning');
+                meaningElement.innerHTML = permissionMeaning;
+                meaningElement.style.backgroundColor = '#1a1a2e';
+                meaningElement.style.padding = '15px';
+                meaningElement.style.borderRadius = '8px';
+                meaningElement.style.marginBottom = '20px';
+                meaningElement.style.lineHeight = '1.6';
+                meaningElement.style.color = '#00ff9d';
+                meaningElement.style.border = '1px solid rgba(0, 255, 157, 0.3)';
+                meaningElement.style.textShadow = '0 0 5px rgba(0, 255, 157, 0.3)';
+            }
+        });        document.getElementById('permissionForm').addEventListener('submit', function (event) {            event.preventDefault();            const newPermissions = document.getElementById('permissionInput').value;
             if (selectedNode) {
                 fetch(`/update_permissions`, {
                     method: 'POST',
@@ -272,3 +385,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     });
+
+    function getSeverityClass(severity) {
+        const classes = {
+            'CRITICAL': 'alert-danger border-danger',
+            'HIGH': 'alert-warning border-warning',
+            'MEDIUM': 'alert-info border-info',
+            'LOW': 'alert-secondary border-secondary'
+        };
+        return classes[severity.toUpperCase()] || 'alert-secondary';
+    }
+    
+    function getSeverityBadgeClass(severity) {
+        const classes = {
+            'CRITICAL': 'bg-danger',
+            'HIGH': 'bg-warning text-dark',
+            'MEDIUM': 'bg-info',
+            'LOW': 'bg-secondary'
+        };
+        return classes[severity.toUpperCase()] || 'bg-secondary';
+    }
