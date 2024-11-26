@@ -91,27 +91,31 @@ def check_sensitive_files(path):
 def get_file_structure(path, include_files=False):
     structure = []
     if os.path.isdir(path):
-        for entry in os.listdir(path):
-            full_path = os.path.join(path, entry)
-            if os.path.isdir(full_path):
-                structure.append({
-                    "name": entry,
-                    "path": full_path,
-                    "type": "directory",
-                    "permissions": get_permissions(full_path),
-                    "owner": pwd.getpwuid(os.stat(full_path).st_uid).pw_name,
-                    "group": grp.getgrgid(os.stat(full_path).st_gid).gr_name,
-                    "children": get_file_structure(full_path, include_files)
-                })
-            elif include_files and os.path.isfile(full_path):
-                structure.append({
-                    "name": entry,
-                    "path": full_path,
-                    "type": "file",
-                    "permissions": get_permissions(full_path),
-                    "owner": pwd.getpwuid(os.stat(full_path).st_uid).pw_name,
-                    "group": grp.getgrgid(os.stat(full_path).st_gid).gr_name
-                })
+        try:
+            for entry in os.listdir(path):
+                full_path = os.path.join(path, entry)
+
+                if os.path.isdir(full_path):
+                    structure.append({
+                        "name": entry,
+                        "path": full_path,
+                        "type": "directory",
+                        "permissions": get_permissions(full_path),
+                        "owner": pwd.getpwuid(os.stat(full_path).st_uid).pw_name,
+                        "group": grp.getgrgid(os.stat(full_path).st_gid).gr_name,
+                        "children": get_file_structure(full_path, include_files)
+                    })
+                elif include_files and os.path.isfile(full_path):
+                    structure.append({
+                        "name": entry,
+                        "path": full_path,
+                        "type": "file",
+                        "permissions": get_permissions(full_path),
+                        "owner": pwd.getpwuid(os.stat(full_path).st_uid).pw_name,
+                        "group": grp.getgrgid(os.stat(full_path).st_gid).gr_name
+                    })
+        except PermissionError:
+            app.logger.error(f"Permission denied: {path}")
     return structure
 
 @app.route('/')
