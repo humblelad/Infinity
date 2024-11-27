@@ -84,6 +84,25 @@
         #folderInput {
             border: 2px solid #0099ff !important;
         }
+        table {
+        border-collapse: collapse;
+        margin: 20px auto;
+        width: 80%;
+    }
+
+    th, td {
+        border: 0px #ccc;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+        width: 25%;
+    }
+
+    .perm-checkbox{
+        margin: 0 auto;
+        display: block;
+    }
+
     </style>
 </head>
 <body>
@@ -120,10 +139,42 @@
                 <span aria-hidden="true" style="color: white;">x</span>
             </button>
         </div>
-        <div id="permissionMeaning" class="card-text mb-3"></div>
+        
         <div class="form-group">
-            <label for="permissionInput" style="color:white">Update via Numeric Permissions:</label> <a href="https://github.com/humblelad/Infinity/blob/main/Linux_SysAdmin_FilePerm_CheatSheet.md" target="_blank">Cheatsheet</a>
-            <input type="text" class="form-control" id="permissionInput" placeholder="Enter new permissions">
+            <table class="table table-bordered card-text mb-3" align="center" style="background-color: rgb(26, 26, 46); align-content: center; padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.6; color: rgb(0, 255, 157); border: 1px solid rgba(0, 255, 157, 0.3); text-shadow: rgba(0, 255, 157, 0.3) 0px 0px 5px;">
+                <tr>
+                <th></th>
+                <th class="card-text">Read</th>
+                <th class="card-text">Write</th>
+                <th class="card-text">Execute</th>
+                </tr>
+                
+                <tr>
+                <td  class="card-text">Owner</td>
+                <td><input class="perm-checkbox" type="checkbox" id="owner_read" name="owner_read" value="4"></td>
+                <td><input class="perm-checkbox" type="checkbox" id="owner_write" name="owner_write" value="2"></td>
+                <td><input class="perm-checkbox" type="checkbox" id="owner_execute" name="owner_execute" value="1"></td>
+                </tr>
+                
+                <tr>
+                <td class="card-text mb-3">Group</td>
+                <td><input class="perm-checkbox" type="checkbox" id="group_read" name="group_read" value="4"></td>
+                <td><input class="perm-checkbox" type="checkbox" id="group_write" name="group_write" value="2"></td>
+                <td><input class="perm-checkbox" type="checkbox" id="group_execute" name="group_execute" value="1"></td>
+                </tr>
+                
+                <tr>
+                <td class="card-text mb-3">Others</td>
+                <td><input class="perm-checkbox" type="checkbox" id="others_read" name="others_read" value="4"></td>
+                <td><input class="perm-checkbox" type="checkbox" id="others_write" name="others_write" value="2"></td>
+                <td><input class="perm-checkbox" type="checkbox" id="others_execute" name="others_execute" value="1"></td>
+                </tr>
+                
+                </table>
+                <div style="background-color: rgb(26, 26, 46); align-content: center; padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.6; color: rgb(0, 255, 157); border: 1px solid rgba(0, 255, 157, 0.3); text-shadow: rgba(0, 255, 157, 0.3) 0px 0px 5px;">
+                    <p><strong>New Permissions:</strong> <span id="permissionInput">000</span></p>
+                </div>
+            
         </div>
         <button type="submit" class="btn btn-primary">Update</button>
     </form></div>
@@ -135,6 +186,30 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    
+    function calculateEntityPermission(entity) {
+        let permission = 0;
+        document.querySelectorAll(`input[name^="${entity}_"]:checked`).forEach((checkbox) => {
+            permission += parseInt(checkbox.value, 10);
+        });
+        return permission;
+    }
+
+    function calculatePermissions() {
+        const owner = calculateEntityPermission('owner');
+        const group = calculateEntityPermission('group');
+        const others = calculateEntityPermission('others');
+        
+        document.getElementById('permissionInput').textContent = `${owner}${group}${others}`;
+    }
+
+    document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+        checkbox.addEventListener('change', calculatePermissions);
+    });
+
+    calculatePermissions();
+</script>
 <div id="securityPanel" class="card position-fixed" style="right: 20px; top: 100px; width: 400px; display: none; background: #0a0a0f; color: #00ff9d; border: 1px solid rgba(0, 255, 255, 0.2); box-shadow: 0 0 20px rgba(0, 255, 255, 0.3); cursor: move;">
     <div class="card-header bg-dark text-cyan d-flex justify-content-between align-items-center">
         <h5 class="m-0">Hawk Analysis</h5>
