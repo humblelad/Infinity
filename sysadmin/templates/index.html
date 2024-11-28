@@ -6,6 +6,8 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -84,9 +86,62 @@
         #folderInput {
             border: 2px solid #0099ff !important;
         }
+        .permission-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #00ff9d;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            margin: 4px;
+            z-index: 1;
+        }
+
+        .permission-btn::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082);
+            border-radius: 22px;
+            z-index: -1;
+            animation: rotate-border 2s linear infinite;
+        }
+
+        .permission-btn::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        .permission-btn:hover {
+            color: white;
+            transform: scale(1.02);
+        }
+
+        .permission-btn:hover::before {
+            opacity: 0.5;
+        }
+
+        .permission-btn:hover::after {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes rotate-border {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
     </style>
-</head>
-<body>
+</head><body>
     
 <div class="container-fluid p-2">
     <form id="folderForm" class="card shadow-lg p-2 bg-gradient w-100">

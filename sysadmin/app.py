@@ -80,7 +80,8 @@ def check_sensitive_files(path):
                                     'permission': file_perms,
                                     'risk_level': severity,
                                     'section': section,
-                                    'recommendation': f'{recommendation} (change to: {recommended_chmod})'
+                                    'new_permission': recommended_chmod,
+                                    'recommendation': f'{recommendation}'
                                 })
                 
             except Exception as e:
