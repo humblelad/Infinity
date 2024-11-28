@@ -101,7 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                         </div>
                                         <small class="d-block mt-1">${issue.file}</small>
                                         <span class="d-block" style="font-weight: bold;">Permission: ${issue.permission}</span>
-                                        <span class="text-success d-block" style="font-weight: bold;">${issue.recommendation}</span>
+                                        <div class="mt-2">
+                                            <span class="text-success" style="font-weight: bold;">${issue.recommendation}</span>
+                                            <div class="mt-2">
+                                                <button class="permission-btn" data-path="${issue.file}" data-permission="${issue.new_permission}">
+                                                    Change to ${issue.new_permission}
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 `).join('')}
                             </div>
@@ -405,3 +412,72 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         return classes[severity.toUpperCase()] || 'bg-secondary';
     }
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('permission-btn')) {
+        const path = event.target.dataset.path;
+        const newPermissions = event.target.dataset.permission;
+        const issueElement = event.target.closest('.alert');
+
+        Swal.fire({
+            title: 'Confirm Permission Change',
+            html: `Are you sure you want to change permissions for:<br>
+                    <span class="text-info">${path}</span> --> <span class="text-warning">${newPermissions}</span>?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, change it!',
+            cancelButtonText: 'Cancel',
+            background: '#0a0a0f',
+            color: '#00ff9d',
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#dc3545',
+            backdrop: `rgba(0,0,0,0.8)`,
+            customClass: {
+                popup: 'animated fadeInDown'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/update_permissions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        path: path,
+                        permissions: newPermissions
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Permissions updated successfully',
+                            icon: 'success',
+                            background: '#0a0a0f',
+                            color: '#00ff9d',
+                            confirmButtonColor: '#28a745'
+                        });
+                        $(issueElement).slideUp(400, function() {
+                            $(this).remove();
+                            const parentSection = $(this).closest('.section-group');
+                            if (parentSection.find('.alert').length === 0) {
+                                parentSection.slideUp(400, function() {
+                                    $(this).remove();
+                                });
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to update permissions',
+                            icon: 'error',
+                            background: '#0a0a0f',
+                            color: '#00ff9d',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
