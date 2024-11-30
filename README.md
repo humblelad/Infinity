@@ -48,3 +48,9 @@ python3 -m flask run
 - select a node and press `spacebar` to bring the modal box.
 - enter the new permissions and click `Update`
 
+## To Do
+
+- [ ] Hawk asynchronously refreshes the security status to show NO security issues found if a sysadmin updates a particular file, which it recommends instead of updating it again and putting an absolute path later.
+- [ ] Selecting file permissions through checkbox / instead of typing it
+- [ ] Track marked files, including who changed what and when (integration with tools like audited commands).
+- [x] Display buttons next to each hawk recommendation to automatically update the permissions after confirmation through the helper.sh sudo permissions.
