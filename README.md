@@ -5,11 +5,11 @@ A web-based tool designed for System Administrators to efficiently manage and an
 ## Installation
 Follow the steps mentioned in [Wiki Installation](https://github.com/humblelad/Infinity/wiki/2.-Installation) to install Infinity.
 
-## How to Use
-Refer to the [Wiki Usage](https://github.com/humblelad/Infinity/wiki/4.-App-Usage) for detailed instructions on how to use Infinity.
-
 ## Key Features
 Refer to the [Wiki Features](https://github.com/humblelad/Infinity/wiki/3.-Features) for a overview of the features offered by Infinity.
+
+## How to Use
+Refer to the [Wiki Usage](https://github.com/humblelad/Infinity/wiki/4.-App-Usage) for detailed instructions on how to use Infinity.
 
 ## Contributors
 
