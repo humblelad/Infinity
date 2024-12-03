@@ -1,6 +1,8 @@
 # Infinity
 
-A web-based tool designed for System Administrators to efficiently manage and analyze Linux file permissions through a visual interface.
+A Tree-node Dashboard designed for System Administrators to efficiently manage and analyze Linux file permissions through a visual interface.
+
+Features like Visual File System Navigation, File Permission Management, Automatic detection and mitigation of overly permissive files. Check wiki for more info.
 
 ## Installation
 Follow the steps mentioned in [Wiki Installation](https://github.com/humblelad/Infinity/wiki/2.-Installation) to install Infinity automatically.
