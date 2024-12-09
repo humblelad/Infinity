@@ -5,7 +5,7 @@ A Tree-node Dashboard designed for System Administrators to efficiently manage a
 Features like Visual File System Navigation, File Permission Management, Automatic detection and mitigation of overly permissive files. Check wiki for more info.
 # Architecture
 
-<img src="https://github.com/humblelad/Infinity/blob/main/Architecture-Diagram.png">
+
 
 ## Installation
 Follow the steps mentioned in [Wiki Installation](https://github.com/humblelad/Infinity/wiki/2.-Installation) to install Infinity automatically.
