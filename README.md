@@ -3,6 +3,8 @@
 A Tree-node Dashboard designed for System Administrators to efficiently manage and analyze Linux file permissions through a visual interface.
 
 Features like Visual File System Navigation, File Permission Management, Automatic detection and mitigation of overly permissive files. Check wiki for more info.
+
+Video demo: https://vimeo.com/1035832962/091ba4b7a4
 # Architecture
 <img src="https://github.com/humblelad/Infinity/blob/main/Arch.png">
 
